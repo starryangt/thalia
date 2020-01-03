@@ -9,7 +9,6 @@ const BLOCK_TAGS = new Set([
     "h6",
     "p",
     "div",
-    "table",
     "map",
     "span"
 ])
@@ -26,6 +25,11 @@ class Block{
         this.golden = false
 
         this.features = []
+    }
+
+    to_training(){
+        let explicit_cast = (bool) => bool ? 1 : 0
+        return [this.features, explicit_cast(this.golden)]
     }
 }
 

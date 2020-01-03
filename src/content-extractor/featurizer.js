@@ -162,7 +162,7 @@ function depth_features($, block){
     levels.fill([])
 
     function helper(node, height){
-        if (!node){
+        if (!node || height >= 5){
             return
         }
         levels[height].push(node)

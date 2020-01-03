@@ -17,6 +17,8 @@
     "axios": "^0.19.0",
     "cheerio": "^1.0.0-rc.3",
     "core-js": "^3.4.3",
+    "ml-matrix": "^6.4.1",
+    "ml-pca": "^4.0.1",
     "ml-random-forest": "^2.0.1",
     "node-gyp": "^5.0.7",
     "vue": "^2.6.10",

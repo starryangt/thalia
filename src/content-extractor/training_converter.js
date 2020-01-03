@@ -80,7 +80,7 @@ function get_labels(blocks, golden_standard){
             block_tokens.push(t)
         }
     }
-    let golden_tokens = golden_standard.split("\n").map((str) => equalizer(str))
+    let golden_tokens = golden_standard.split("\n").map((str) => equalizer(str)).filter(e => e.length !== 0)
     let key = (token) => {
         if (typeof(token) === "string"){
             return token
@@ -105,16 +105,43 @@ function idk(html_string, golden_standard){
     let [blocks, $] = HTMLToBlockCheerio(html_string)
     let non_empty = blocks.filter((e) => 0 !== e.text.length)
     let golden_blocks = get_labels(non_empty, golden_standard)
-
+    
     let features = []
     for(let block of non_empty){
         let block_feat = per_node($, block)
+        let feat2 = ancestor_features($, block)
+        let feat3 = depth_features($, block)
         block.features.push(...block_feat)
+        block.features.push(...feat2)
+        block.features.push(...feat3)
     }
+
+    let X = []
+    let y = []
+    for(let final_block of non_empty){
+        let [x, y_] = final_block.to_training()
+        X.push(x)
+        y.push(y_)
+    }
+
+    return { 'X': X, 'y': y}
+}
+
+function to_evaluation(html_string){
+    let [blocks, $] = HTMLToBlockCheerio(html_string)
+    let non_empty = blocks.filter((e) => 0 !== e.text.length)
+    for(let block of non_empty){
+        let block_feat = per_node($, block)
+        let feat2 = ancestor_features($, block)
+        let feat3 = depth_features($, block)
+        block.features.push(...block_feat)
+        //block.features.push(...feat2)
+        //block.features.push(...feat3)
+    }
+
     return non_empty
 }
 
 
-
-export { LCS, idk }
+export { LCS, idk, to_evaluation }
 
