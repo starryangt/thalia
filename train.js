@@ -42,14 +42,14 @@ function load_files(list_of_files){
 
 let [training_X, training_y] = load_files(getRandomSubarray(list_of_training.split("\n"), 300))
 
-let p = new PCA(training_X, { 'nCompNIPALS': 5, 'method': 'NIPALS'})
-let new_X = p.predict(training_X)
+//let p = new PCA(training_X, { 'nCompNIPALS': 5, 'method': 'NIPALS'})
+let new_X = training_X
 
 var options = {
     seed: 42,
-    maxFeatures: 5,
+    maxFeatures: 8,
     replacement: true,
-    nEstimators: 10
+    nEstimators: 15
   };
 
 let classifier = new RandomForestClassifier(options)
