@@ -40,19 +40,12 @@ function load_files(list_of_files){
     return [x, y]
 }
 
-let [training_X, training_y] = load_files(getRandomSubarray(list_of_training.split("\n"), 300))
+let [training_X, training_y] = load_files(list_of_training.split("\n").slice(0, 1))
 
 //let p = new PCA(training_X, { 'nCompNIPALS': 5, 'method': 'NIPALS'})
 let new_X = training_X
 
-var options = {
-    seed: 42,
-    maxFeatures: 8,
-    replacement: true,
-    nEstimators: 15
-  };
-
-let classifier = new RandomForestClassifier(options)
+let classifier = new RandomForestClassifier()
 console.log("Training...")
 let previous_time = Date.now()
 classifier.train(new_X, training_y)
@@ -61,7 +54,7 @@ console.log("Finished training, took " + (diff / 1000) + " seconds")
 
 console.log("Testing training accuracy")
 let [test_X, test_y] = load_files(list_of_test.split("\n"))
-let new_PX = p.predict(test_X)
+let new_PX = test_X
 let result = classifier.predict(new_PX)
 
 let true_positive = 0
@@ -87,10 +80,8 @@ for(let i = 0; i < result.length; i++){
 let precision = true_positive / (true_positive + false_positive)
 let recall = true_positive / (true_positive + false_negative)
 let F1 = 2 * ((precision * recall) / (precision + recall))
-console.log("Final Test F1 Score: " + F1)
+console.log("Final Test F1 Score: " + F1 + " " + true_positive + " " + false_negative +  " ")
 
-let PCASerialized = JSON.stringify(p)
 let serialized = JSON.stringify(classifier)
 let date = Date.now()
 fs.writeFileSync(`./${date}_RFModel`, serialized)
-fs.writeFileSync(`./${date}_PCAModel`, PCASerialized)
