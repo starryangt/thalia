@@ -15,6 +15,17 @@ const file_path = './training_data/Custom/'
 let list_of_training = fs.readFileSync('./training_data/training.txt', 'utf-8')
 let list_of_test = fs.readFileSync('./training_data/test.txt', 'utf-8')
 
+function getRandomSubarray(arr, size) {
+    var shuffled = arr.slice(0), i = arr.length, min = i - size, temp, index;
+    while (i-- > min) {
+        index = Math.floor((i + 1) * Math.random());
+        temp = shuffled[index];
+        shuffled[index] = shuffled[i];
+        shuffled[i] = temp;
+    }
+    return shuffled.slice(min);
+}
+
 function load_files(list_of_files){
     let x = []
     let y = []
@@ -29,7 +40,7 @@ function load_files(list_of_files){
     return [x, y]
 }
 
-let [training_X, training_y] = load_files(list_of_training.split("\n"))
+let [training_X, training_y] = load_files(getRandomSubarray(list_of_training.split("\n"), 300))
 
 let p = new PCA(training_X, { 'nCompNIPALS': 5, 'method': 'NIPALS'})
 let new_X = p.predict(training_X)
@@ -52,15 +63,31 @@ console.log("Testing training accuracy")
 let [test_X, test_y] = load_files(list_of_test.split("\n"))
 let new_PX = p.predict(test_X)
 let result = classifier.predict(new_PX)
-let correct = 0
-let total = 0
+
+let true_positive = 0
+let false_positive = 0
+let false_negative = 0
+
 for(let i = 0; i < result.length; i++){
     if(result[i] === test_y[i]){
-        correct += 1
+        if (result[i] == 1){
+            true_positive++
+        }
     }
-    total += 1
+    else{
+        if (result[i] === 1){
+            false_positive++
+        }
+        else{
+            false_negative++
+        }
+    }
 }
-console.log("Final Test Accuracy: " + (correct / total))
+
+let precision = true_positive / (true_positive + false_positive)
+let recall = true_positive / (true_positive + false_negative)
+let F1 = 2 * ((precision * recall) / (precision + recall))
+console.log("Final Test F1 Score: " + F1)
 
 let PCASerialized = JSON.stringify(p)
 let serialized = JSON.stringify(classifier)

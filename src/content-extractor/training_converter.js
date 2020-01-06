@@ -135,8 +135,8 @@ function to_evaluation(html_string){
         let feat2 = ancestor_features($, block)
         let feat3 = depth_features($, block)
         block.features.push(...block_feat)
-        //block.features.push(...feat2)
-        //block.features.push(...feat3)
+        block.features.push(...feat2)
+        block.features.push(...feat3)
     }
 
     return non_empty

@@ -8,6 +8,9 @@ import fs from 'fs'
 import ml_random_forest from 'ml-random-forest';
 const { RandomForestClassifier } = ml_random_forest
 
+import pca from 'ml-pca'
+const { PCA } = pca
+
 const url = "https://silveredtongue.wordpress.com/2019/08/03/volume-16-gevaudan-of-the-star-fortress-chapter-three-then-end-of-retreat-bourtange/"
 const test = "<html><body><div>Hey there<p>y ou're a rockstar</p></div></body></html>"
 async function do_something(){
@@ -36,15 +39,23 @@ async function test_pls(){
         X.push(block.features)
     }
 
-    let model = fs.readFileSync('./model.json', 'utf8')
-    let rf = RandomForestClassifier.load(JSON.parse(model))
+    console.log(X[0].length)
+
+    let PCAModel = fs.readFileSync('./models/3PCAModel', 'utf8')
+    let RFModel = fs.readFileSync('./models/3RFModel', 'utf8')
+    let rf = RandomForestClassifier.load(JSON.parse(RFModel))
+    let p = PCA.load(JSON.parse(PCAModel))
     console.log("Predicting")
-    let prediction = rf.predict(X)
+    let new_x = p.predict(X)
+    console.log(new_x)
+    //console.log(new_x)
+    let prediction = rf.predict(new_x)
+    console.log(prediction)
+    let sum = 0
     for(let i in prediction){
-        if (prediction[i] == 1){
-            console.log(blocks[i].text)
-        }
+        sum += prediction[i]
     }
+    console.log(sum)
 
 }
 

@@ -124,18 +124,12 @@ let per_node_features = [
 ]
 let per_node = feature_factory(per_node_features)
 
-let descendant_node_features = [
-    total_length, num_children, avg_class_length, avg_id_length, num_class
-]
-
-let descendant_features = feature_factory(descendant_node_features)
-    
 function ancestor_features($, block){
     let current = block
     let features = []
     current = block.parent 
     let count = 0;
-    while (count < 5){
+    while (count < 2){
         if (current){
             let feature = per_node($, current)
             features.push(...feature)
@@ -158,11 +152,11 @@ function depth_features($, block){
     let node = block.origin
 
     let levels = []
-    levels.length = 5;
+    levels.length = 1;
     levels.fill([])
 
     function helper(node, height){
-        if (!node || height >= 5){
+        if (!node || height >= 1){
             return
         }
         levels[height].push(node)
@@ -184,7 +178,12 @@ function depth_features($, block){
             let child_features = CTR($, pseudo_block)
             level_CTR += child_features
         }
+        level_CTR /= level.length
         feat.push(level_CTR)
+    }
+
+    if (feat.length == 0){
+        return [0]
     }
     return feat
 }
